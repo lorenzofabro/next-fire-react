@@ -2,6 +2,11 @@ import styles from "../../styles/Post.module.css";
 import PostContent from "../../components/PostContent";
 import { firestore, getUserWithUsername, postToJSON } from "../../lib/firebase";
 import { useDocumentData } from "react-firebase-hooks/firestore";
+import AuthCheck from "../../components/AuthCheck";
+import Link from "next/link";
+import HeartButton from "../../components/HeartButton";
+import { useContext } from "react";
+import { UserContext } from "../../lib/context";
 
 export async function getStaticProps({ params }) {
   const { username, slug } = params;
@@ -50,6 +55,8 @@ export default function Post(props) {
 
   const post = realtimePost || props.post;
 
+  const { user: currentUser } = useContext(UserContext);
+
   return (
     <main className={styles.container}>
       <section>
@@ -60,6 +67,22 @@ export default function Post(props) {
         <p>
           <strong>{post.heartCount || 0} 🤍</strong>
         </p>
+
+        <AuthCheck
+          fallback={
+            <Link href="/enter" passHref>
+              <button>💗 sign up</button>
+            </Link>
+          }
+        >
+          <HeartButton postRef={postRef} />
+        </AuthCheck>
+
+        {currentUser?.uid === post.uid && (
+          <Link href={`/admin/${post.slug}`} passHref>
+            <button className="btn-blue">edit post</button>
+          </Link>
+        )}
       </aside>
     </main>
   );
