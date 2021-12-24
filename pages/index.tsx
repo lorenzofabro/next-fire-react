@@ -5,7 +5,7 @@ import PostFeed from "../components/PostFeed";
 import { firestore, fromMillis, postToJSON } from "../lib/firebase";
 
 // Max post to query per page
-const LIMIT = 10;
+const LIMIT = 3;
 
 export async function getServerSideProps(context) {
   const postsQuery = firestore
